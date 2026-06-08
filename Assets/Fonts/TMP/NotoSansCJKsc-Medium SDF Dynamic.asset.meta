@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Photon/Fusion/Resources/PhotonAppSettings.asset.meta
+guid: 06a1315061083d3429b7287f1d90fa4a
+labels:
+- FusionDefaultGlobal
+========
+guid: df7b39bad13d803448bb17ff977adf66
+>>>>>>>> Stashed changes:Assets/Fonts/TMP/NotoSansCJKsc-Medium SDF Dynamic.asset.meta
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
