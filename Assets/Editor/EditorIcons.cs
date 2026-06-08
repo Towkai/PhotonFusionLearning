@@ -391,8 +391,37 @@ public class EditorIcons : EditorWindow
     // https://unitylist.com/p/5c3/Unity-editor-icons
 
     #region ICONS
-
-    public static string[] ico_list = 
+    private static AssetBundle GetEditorAssetBundle()
+    {
+        return (AssetBundle) typeof(EditorGUIUtility).GetMethod("GetEditorAssetBundle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).Invoke(null, new object[] { });
+    }
+    private static string GetIconsPath()
+    {
+#if UNITY_2018_3_OR_NEWER
+        return UnityEditor.Experimental.EditorResources.iconsPath;
+#else
+        var assembly = typeof(EditorGUIUtility).Assembly;
+        var editorResourcesUtility = assembly.GetType("UnityEditorInternal.EditorResourcesUtility");
+        var iconsPathProperty = editorResourcesUtility.GetProperty(
+            "iconsPath",
+            BindingFlags.Static | BindingFlags.Public);
+        return (string)iconsPathProperty.GetValue(null, new object[] { });
+#endif
+    }
+    private static IEnumerable<string> EnumerateIcons(AssetBundle editorAssetBundle, string iconsPath)
+    {
+        foreach (var assetName in editorAssetBundle.GetAllAssetNames())
+            if (assetName.StartsWith(iconsPath, StringComparison.OrdinalIgnoreCase) &&
+                (assetName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                 assetName.EndsWith(".asset", StringComparison.OrdinalIgnoreCase)))
+                yield return assetName;
+    }
+    public string[] ico_list { get {
+        var assetBundle = GetEditorAssetBundle();
+        return EnumerateIcons(assetBundle, GetIconsPath()).ToArray();
+        return fixed_ico_list;
+    } set => fixed_ico_list = value; }
+    public static string[] fixed_ico_list = 
     {
         "_Help","_Popup","aboutwindow.mainheader","ageialogo","AlphabeticalSorting","Animation.AddEvent",
         "Animation.AddKeyframe","Animation.EventMarker","Animation.FirstKey","Animation.LastKey",
