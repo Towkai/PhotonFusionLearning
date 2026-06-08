@@ -14,6 +14,7 @@ namespace UnityToolbarExtender
 		internal static void OnToolbarGUI()
 		{
 			if (GUILayout.Button(recompileBtn, CustomToolbar.commandButtonStyle)) {
+				AssetDatabase.Refresh();
 				UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
 				Debug.Log("Recompile");
 			}
