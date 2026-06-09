@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-namespace Sample.HostBasics
+namespace Test.HostBasics
 {
     public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {

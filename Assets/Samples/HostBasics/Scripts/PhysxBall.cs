@@ -2,20 +2,23 @@ using Fusion;
 using UnityEngine;
 
 
-public class PhysxBall : NetworkBehaviour
+namespace Sample.HostBasics
 {
-    [Networked]
-    private TickTimer life { get; set; }
-
-    public void Init(Vector3 forward)
+    public class PhysxBall : NetworkBehaviour
     {
-        life = TickTimer.CreateFromSeconds(Runner, 5.0f);
-        GetComponent<Rigidbody>().linearVelocity = forward;
-    }
+        [Networked]
+        private TickTimer life { get; set; }
 
-    public override void FixedUpdateNetwork()
-    {
-        if (life.Expired(Runner))
-            Runner.Despawn(Object);
+        public void Init(Vector3 forward)
+        {
+            life = TickTimer.CreateFromSeconds(Runner, 5.0f);
+            GetComponent<Rigidbody>().linearVelocity = forward;
+        }
+
+        public override void FixedUpdateNetwork()
+        {
+            if (life.Expired(Runner))
+                Runner.Despawn(Object);
+        }
     }
 }

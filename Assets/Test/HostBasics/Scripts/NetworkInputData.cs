@@ -2,7 +2,7 @@ using Fusion;
 using UnityEngine;
 
 
-namespace Sample.HostBasics
+namespace Test.HostBasics
 {
     public struct NetworkInputData : INetworkInput
     {

@@ -1,6 +1,6 @@
 using Fusion;
 
-namespace Sample.HostBasics
+namespace Test.HostBasics
 {
     public class Ball : NetworkBehaviour
     {

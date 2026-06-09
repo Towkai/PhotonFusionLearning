@@ -2,7 +2,8 @@ using Fusion;
 using TMPro;
 using UnityEngine;
 
-namespace Sample.HostBasics
+
+namespace Test.HostBasics
 {
     public class Player : NetworkBehaviour
     {
@@ -12,8 +13,8 @@ namespace Sample.HostBasics
         [SerializeField]
         private PhysxBall _prefabPhysxBall;
         
-        private Material _material;
-        public Color color = Color.blue;
+        // private Material _material;
+        // public Color color = Color.blue;
 
         [Networked]
         private TickTimer delay { get; set; }
@@ -30,7 +31,7 @@ namespace Sample.HostBasics
         {
             m_collider = GetComponent<Collider>();
             _cc = GetComponent<NetworkCharacterController>();
-            _material = GetComponentInChildren<MeshRenderer>().material;
+            // _material = GetComponentInChildren<MeshRenderer>().material;
         }
         
         public override void Spawned()
@@ -47,7 +48,6 @@ namespace Sample.HostBasics
 
                 if (data.direction.sqrMagnitude > 0)
                     _forward = data.direction;
-
                 if (HasStateAuthority && delay.ExpiredOrNotRunning(Runner))
                 {
                     if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON0))
@@ -101,19 +101,19 @@ namespace Sample.HostBasics
             _messages.text += message;
         }
 
-        public override void Render()
-        {
-            foreach (var change in _changeDetector.DetectChanges(this))
-            {
-                switch (change)
-                {
-                    case nameof(spawnedProjectile):
-                        _material.color = Color.white;
-                        break;
-                }
-            }
+        // public override void Render()
+        // {
+        //     foreach (var change in _changeDetector.DetectChanges(this))
+        //     {
+        //         switch (change)
+        //         {
+        //             case nameof(spawnedProjectile):
+        //                 _material.color = Color.white;
+        //                 break;
+        //         }
+        //     }
             
-            _material.color = Color.Lerp(_material.color, color, Time.deltaTime);
-        }
+        //     _material.color = Color.Lerp(_material.color, color, Time.deltaTime);
+        // }
     }
 }
