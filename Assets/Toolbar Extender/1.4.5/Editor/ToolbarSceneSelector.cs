@@ -135,6 +135,7 @@ namespace UnityToolbarExtender
                     fullname = Path.Combine(folder, name).Replace("\\", "/");
                 }
                 GUIContent content = inBuild ? new GUIContent(name, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image) : new GUIContent(fullname);
+                content.tooltip = fullname;
                 // GUIContent content = new GUIContent(fullname);
 
                 int index = result.Count;
