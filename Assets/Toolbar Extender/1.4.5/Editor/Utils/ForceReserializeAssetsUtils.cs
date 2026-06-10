@@ -12,8 +12,9 @@ namespace UnityToolbarExtender {
             AssetDatabase.ForceReserializeAssets();
         }
 
-        public static void ForceReserializeSelectedAssets() {
-            var assetGUIDs = Selection.assetGUIDs;
+        public static void ForceReserializeSelectedAssets(string[] assetGUIDs = null) {
+            if (assetGUIDs == null)
+                assetGUIDs = Selection.assetGUIDs;
             if (assetGUIDs.Length == 0) {
                 EditorUtility.DisplayDialog("Attention", "No assets are selected.", "Ok");
                 return;
@@ -21,6 +22,16 @@ namespace UnityToolbarExtender {
 
             var assetPaths = Array.ConvertAll<string, string>(assetGUIDs, AssetDatabase.GUIDToAssetPath);
             AssetDatabase.ForceReserializeAssets(assetPaths);
+        }
+        public static void ForceReserializeAssets() {
+            var assetGUIDs = Selection.assetGUIDs;
+            if (assetGUIDs == null || assetGUIDs.Length == 0) {
+                if (EditorUtility.DisplayDialog("ForceReserializeAllAssets", "Are you sure?", "Yes", "No"))
+                    ForceReserializeAllAssets();
+            }
+            else {
+                ForceReserializeSelectedAssets(assetGUIDs);
+            }
         }
     }
 }

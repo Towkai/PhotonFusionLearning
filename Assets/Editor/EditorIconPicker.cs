@@ -9,7 +9,7 @@ using System.IO;
 
 public class EditorIcons : EditorWindow
 {
-    [MenuItem("Tools/Editor Icons", priority = -1001)]
+    [MenuItem("Tools/Editor Icon Picker", priority = -1001)]
     public static void EditorIconsOpen()
     {
 #if UNITY_2018
@@ -42,7 +42,7 @@ public class EditorIcons : EditorWindow
 #else
             search = EditorGUILayout.TextField(search, EditorStyles.toolbarSearchField);
 #endif
-            if ( GUILayout.Button(EditorGUIUtility.IconContent("winbtn_mac_close_h"), //SVN_DeletedLocal
+            if (GUILayout.Button(EditorGUIUtility.IconContent("cancel"), //SVN_DeletedLocal
                 EditorStyles.toolbarButton, 
                 GUILayout.Width(22))
             ) search = "";
@@ -149,13 +149,14 @@ public class EditorIcons : EditorWindow
         }
     }
 
+    private static List<string> unique = new List<string>();
     private void OnEnable()
     {
         //InitIcons();
         //var all_icons = iconContentListAll.Select(x => x.tooltip).ToArray();
         var all_icons = ico_list.Where( x => GetIcon( x ) != null );
         //List<string> found = new List<string>();
-        List<string> unique = new List<string>();
+        // List<string> unique = new List<string>();
         //var skip_flag = HideFlags.HideInInspector | HideFlags.HideAndDontSave;
         //int unique_to_resources = 0, skipped_empty_str = 0, skipped_flags = 0, 
         //    skipped_not_persistent = 0, skipped_nulls = 0, unique_to_list = 0;
@@ -189,7 +190,7 @@ public class EditorIcons : EditorWindow
         //Debug.Log($"totals , list: {all_icons.Length} resource: {found.Count}");
         //Debug.Log($"Unique list={ unique_to_list } resources={unique_to_resources}") ;
 
-        ico_list = ico_list.ToList().Concat(unique).ToArray();
+        // ico_list = ico_list.ToList().Concat(unique).ToArray();
 
         // Static list icons count : 1315 ( unique = 749 )
         // Found icons in resources : 1416 ( unique = 855 )
@@ -209,7 +210,7 @@ public class EditorIcons : EditorWindow
         using ( new GUILayout.HorizontalScope( EditorStyles.toolbar ) )
         {
             if(GUILayout.Button("Save all icons to folder...",EditorStyles.miniButton)) SaveAllIcons();
-            GUILayout.Label("Select what icons to show", GUILayout.Width( 160 ));
+            GUILayout.Label($"{(viewBigIcons ? iconContentListBig.Count : iconContentListSmall.Count)}", GUILayout.Width( 160 ));
             viewBigIcons = GUILayout.SelectionGrid(
               viewBigIcons ? 1 : 0, new string[] { "Small", "Big" }, 
               2 , EditorStyles.toolbarButton) == 1;
@@ -316,7 +317,7 @@ public class EditorIcons : EditorWindow
 
             GUILayout.Space(10);
 
-            if (GUILayout.Button( "X", GUILayout.ExpandHeight(true)))
+            if (GUILayout.Button(EditorGUIUtility.IconContent("cancel@2x"), GUILayout.ExpandHeight(true)))
             {
                 iconSelected = null;
             }
@@ -416,11 +417,66 @@ public class EditorIcons : EditorWindow
                  assetName.EndsWith(".asset", StringComparison.OrdinalIgnoreCase)))
                 yield return assetName;
     }
-    public string[] ico_list { get {
-        var assetBundle = GetEditorAssetBundle();
-        return EnumerateIcons(assetBundle, GetIconsPath()).ToArray();
-        return fixed_ico_list;
-    } set => fixed_ico_list = value; }
+    [Serializable]
+    public class IconCacheData
+    {
+        public string[] icons;
+    }
+    private const string CachePath = "Library/IconCache.json";
+    private static string[] LoadCache()
+    {
+        if (!File.Exists(CachePath))
+            return null;
+
+        try
+        {
+            string json = File.ReadAllText(CachePath);
+
+            var data =
+                JsonUtility.FromJson<IconCacheData>(json);
+
+            return data.icons;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    private static void SaveCache(string[] icons)
+    {
+        var data = new IconCacheData
+        {
+            icons = icons
+        };
+
+        string json =
+            JsonUtility.ToJson(data);
+
+        File.WriteAllText(CachePath, json);
+    }
+    public static string[] GetIcons()
+    {
+        var cache = LoadCache();
+
+        if (cache != null)
+            return cache;
+
+        var icons = EnumerateIcons(
+            GetEditorAssetBundle(),
+            GetIconsPath())
+            .Concat(unique).ToArray();
+        if (icons.Length == 0)
+            return fixed_ico_list;
+
+        SaveCache(icons);
+
+        return icons;
+    }
+    public string[] ico_list { 
+        get => GetIcons();
+        // get => fixed_ico_list.Concat(unique).ToArray();
+        // set => fixed_ico_list = value; 
+    }
     public static string[] fixed_ico_list = 
     {
         "_Help","_Popup","aboutwindow.mainheader","ageialogo","AlphabeticalSorting","Animation.AddEvent",

@@ -26,8 +26,8 @@ namespace UnityToolbarExtender
             ToolbarExtender.RightToolbarGUI.Add(ToolbarTimeSlider.OnToolbarGUI);
             ToolbarExtender.RightToolbarGUI.Add(ToolbarFPSSlider.OnToolbarGUI);
             ToolbarExtender.RightToolbarGUI.Add(ToolbarSceneRecompile.OnToolbarGUI);
-            ToolbarExtender.RightToolbarGUI.Add(ToolbarReserializeSelected.OnToolbarGUI);
-            ToolbarExtender.RightToolbarGUI.Add(ToolbarReserializeAll.OnToolbarGUI);
+            ToolbarExtender.RightToolbarGUI.Add(ToolbarRefresh.OnToolbarGUI);
+            ToolbarExtender.RightToolbarGUI.Add(ToolbarReserializeAssets.OnToolbarGUI);
         }
     }
 }
