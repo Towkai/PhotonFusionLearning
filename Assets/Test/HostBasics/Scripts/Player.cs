@@ -1,5 +1,6 @@
 using Fusion;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
 
 
@@ -23,13 +24,13 @@ namespace Test.HostBasics
         public bool spawnedProjectile { get; set; }
 
         private NetworkCharacterController _cc;
-        protected Collider m_collider;
+        private CharacterController m_controller;
         private Vector3 _forward = Vector3.forward;
         private ChangeDetector _changeDetector;
 
         private void Awake()
         {
-            m_collider = GetComponent<Collider>();
+            m_controller = GetComponent<CharacterController>();
             _cc = GetComponent<NetworkCharacterController>();
             // _material = GetComponentInChildren<MeshRenderer>().material;
         }
@@ -37,6 +38,13 @@ namespace Test.HostBasics
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            if (this.HasInputAuthority)
+            {
+                // Debug.Log("這是我控制的角色");
+                var cm = FindFirstObjectByType<CinemachineCamera>();
+                cm.Target.TrackingTarget = this.transform;
+                cm.Target.LookAtTarget = this.transform.GetChild(0);
+            }
         }
 
         public override void FixedUpdateNetwork()
@@ -53,13 +61,13 @@ namespace Test.HostBasics
                     if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON0))
                     {
                         delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-                        Runner.Spawn(_prefabBall, m_collider.bounds.center + _forward, Quaternion.LookRotation(_forward), Object.InputAuthority, (runner, o) => { o.GetComponent<Ball>().Init(); });
+                        Runner.Spawn(_prefabBall, m_controller.bounds.center + _forward, Quaternion.LookRotation(_forward), Object.InputAuthority, (runner, o) => { o.GetComponent<Ball>().Init(); });
                         spawnedProjectile = !spawnedProjectile;
                     }
                     else if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
                     {
                         delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-                        Runner.Spawn(_prefabPhysxBall, transform.position + _forward, Quaternion.LookRotation(_forward), Object.InputAuthority,
+                        Runner.Spawn(_prefabPhysxBall, m_controller.bounds.center + _forward, Quaternion.LookRotation(_forward), Object.InputAuthority,
                             (runner, o) => { o.GetComponent<PhysxBall>().Init(10 * _forward); });
                         spawnedProjectile = !spawnedProjectile;
                     }

@@ -92,18 +92,19 @@ namespace Test.HostBasics
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
             var data = new NetworkInputData();
+            Camera mainCamera = Camera.main;
 
             if (Input.GetKey(KeyCode.W))
-                data.direction += Vector3.forward;
+                data.direction += Vector3.ProjectOnPlane(mainCamera.transform.forward, Vector3.up).normalized;
 
             if (Input.GetKey(KeyCode.S))
-                data.direction += Vector3.back;
+                data.direction += Vector3.ProjectOnPlane(mainCamera.transform.forward * -1, Vector3.up).normalized;
 
             if (Input.GetKey(KeyCode.A))
-                data.direction += Vector3.left;
+                data.direction += Vector3.ProjectOnPlane(mainCamera.transform.right * -1, Vector3.up).normalized;
 
             if (Input.GetKey(KeyCode.D))
-                data.direction += Vector3.right;
+                data.direction += Vector3.ProjectOnPlane(mainCamera.transform.right, Vector3.up).normalized;
             
             data.buttons.Set(NetworkInputData.MOUSEBUTTON0, _mouseButton0);
             _mouseButton0 = false;
